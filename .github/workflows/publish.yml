@@ -33,6 +33,9 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
+      - name: build Tauri production app
+        run: npm run tauri:build
+
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

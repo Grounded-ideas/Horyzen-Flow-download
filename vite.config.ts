@@ -15,7 +15,13 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    optimizeDeps: {
+      esbuildOptions: {
+        target: 'esnext',
+      },
+    },
     build: {
+      target: 'esnext',
       rollupOptions: {
         output: {
           manualChunks: {
