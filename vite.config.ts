@@ -31,7 +31,7 @@ export default defineConfig(({mode}) => {
             'vendor-react': ['react', 'react-dom'],
           },
         },
-        external: ['puppeteer'],
+        external: ['express', 'node:fs', 'node:path', 'puppeteer'],
       },
       chunkSizeWarningLimit: 1000,
       sourcemap: false,
