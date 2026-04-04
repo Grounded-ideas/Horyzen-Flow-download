@@ -8,10 +8,10 @@ import { Page } from "../types";
 import { cn, formatDate } from "../lib/utils";
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import * as ReactWindow from 'react-window';
-// @ts-ignore
-import { FixedSizeList } from 'react-window';
-// @ts-ignore
-import { AutoSizer } from 'react-virtualized-auto-sizer';
+import * as AutoSizerModule from 'react-virtualized-auto-sizer';
+
+const FixedSizeList = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default || ReactWindow;
+const AutoSizer = (AutoSizerModule as any).AutoSizer || (AutoSizerModule as any).default || AutoSizerModule;
 
 import { useTheme } from "../context/ThemeContext";
 

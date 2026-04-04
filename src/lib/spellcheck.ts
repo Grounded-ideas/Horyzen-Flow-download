@@ -1,5 +1,4 @@
 import nspell from "nspell";
-import dictionaryEn from "dictionary-en";
 
 // Use local dictionary files instead of CDN
 let spellchecker: any = null;
@@ -10,9 +9,19 @@ export async function initSpellchecker() {
 
   console.log("Initializing spellchecker...");
   try {
-    // Convert Uint8Arrays to strings for nspell
-    const aff = new TextDecoder().decode(dictionaryEn.aff);
-    const dic = new TextDecoder().decode(dictionaryEn.dic);
+    const [affResponse, dicResponse] = await Promise.all([
+      fetch("/dictionary/index.aff"),
+      fetch("/dictionary/index.dic"),
+    ]);
+
+    if (!affResponse.ok || !dicResponse.ok) {
+      throw new Error("Failed to load dictionary files");
+    }
+
+    const affBuffer = await affResponse.arrayBuffer();
+    const dicBuffer = await dicResponse.arrayBuffer();
+    const aff = new TextDecoder().decode(new Uint8Array(affBuffer));
+    const dic = new TextDecoder().decode(new Uint8Array(dicBuffer));
 
     spellchecker = nspell(aff, dic);
     console.log("Spellchecker initialized successfully.");
