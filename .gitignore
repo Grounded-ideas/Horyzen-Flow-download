@@ -1,0 +1,22 @@
+# Dependency folders
+node_modules/
+
+# Build output
+dist/
+dist-server/
+out/
+
+# Tauri build artifacts
+src-tauri/target/
+
+# Electron artifacts
+electron/
+Flow.bat
+
+# Logs
+*.log
+
+# Misc
+.DS_Store
+.env*
+!.env.example

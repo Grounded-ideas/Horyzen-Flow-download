@@ -1,0 +1,15 @@
+{
+  "nodes": [
+    {
+      "id": "7b668b3e-cc51-4bd8-84fd-a038054d6468",
+      "title": "Meeting Notes"
+    }
+  ],
+  "edges": [],
+  "stats": {
+    "totalPages": 1,
+    "totalEdges": 0,
+    "mostConnectedPage": "Meeting Notes",
+    "recentEdges": []
+  }
+}
