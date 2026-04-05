@@ -11,6 +11,6 @@
     "dialog:default",
     "process:allow-restart",
     "fs:default",
-    "path:default"
+    "core:path:default"
   ]
 }
