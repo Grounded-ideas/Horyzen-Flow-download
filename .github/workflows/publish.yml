@@ -9,12 +9,7 @@ jobs:
   publish-tauri:
     permissions:
       contents: write
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [windows-latest]
-
-    runs-on: ${{ matrix.platform }}
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -32,16 +27,15 @@ jobs:
       - name: build frontend
         run: npm run build
 
-      - name: Build and Publish
-        uses: tauri-apps/tauri-action@v0
+      - name: build tauri app
+        # MANUALLY FORCING RELEASE MODE
+        run: npx tauri build --verbose
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_ENV: production
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          # This EXACT string forces the production 'build' command
-          args: --verbose
-          tagName: v__VERSION__
-          releaseName: 'Flow v__VERSION__'
-          releaseBody: "New release of Flow App."
-          releaseDraft: true
-          prerelease: false
+          name: Flow-App-Windows
+          path: src-tauri/target/release/bundle/msi/*.msi
