@@ -38,8 +38,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_ENV: production
         with:
-          # ADDED 'build' here to stop it from running 'dev'
-          args: build --verbose
+          # This EXACT string forces the production 'build' command
+          args: --verbose
           tagName: v__VERSION__
           releaseName: 'Flow v__VERSION__'
           releaseBody: "New release of Flow App."
