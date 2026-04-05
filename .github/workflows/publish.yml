@@ -7,6 +7,8 @@ on:
 
 jobs:
   publish-tauri:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -24,12 +26,6 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-20.04'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
-
       - name: install frontend dependencies
         run: npm install
 
@@ -40,15 +36,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_ENV: production
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
-          args: build
-          tagName: v__VERSION__ # the action automatically replaces __ with v: v__VERSION__ => v1.0.0
+          # FORCING BUILD ONLY - NO DEV SERVER
+          args: --verbose
+          tagName: v__VERSION__
           releaseName: 'Flow v__VERSION__'
-          releaseBody: |
-            See the assets to download this version and install.
-
-            For detailed release notes, see our [releases page](https://github.com/${{ github.repository }}/releases).
-          releaseDraft: false
+          releaseBody: "New release of Flow App."
+          releaseDraft: true
           prerelease: false
