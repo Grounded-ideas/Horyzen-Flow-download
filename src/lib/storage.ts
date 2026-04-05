@@ -4,8 +4,8 @@
  */
 
 import { Page } from "../types";
-import { readTextFile, writeTextFile, createDir, exists } from '@tauri-apps/plugin-fs';
-import { appDataDir, join } from '@tauri-apps/api/path';
+import { readTextFile, writeTextFile, mkdir, exists } from '@tauri-apps/plugin-fs';
+import { appDataDir, join } from '@tauri-apps/plugin-path';
 
 const STORAGE_KEY = "flow_pages";
 
@@ -43,7 +43,8 @@ export const storage = {
       
       const fileExists = await exists(pagesPath);
       if (!fileExists) {
-        await createDir(appData, { recursive: true });
+        // FIXED: changed createDir to mkdir
+        await mkdir(appData, { recursive: true });
         return [];
       }
       
@@ -83,7 +84,8 @@ export const storage = {
       const appData = await appDataDir();
       const pagesPath = await join(appData, 'pages.json');
       
-      await createDir(appData, { recursive: true });
+      // FIXED: changed createDir to mkdir
+      await mkdir(appData, { recursive: true });
       
       let pages: Page[] = [];
       try {
