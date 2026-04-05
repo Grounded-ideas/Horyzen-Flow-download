@@ -36,17 +36,19 @@ export function Editor({
   wordCount,
   isSpellCheckEnabled,
 }: EditorProps) {
-  const [isTyping, setIsTyping] = useState(false);
-  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [suggestions, setSuggestions] = useState<{ 
-    word: string; 
-    suggestions: string[]; 
-    x: number; 
-    y: number;
-    from: number;
-    to: number;
-  } | null>(null);
-  const editorRef = useRef<any>(null);
+  const [isHoveringTop, setIsHoveringTop] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isFocusMode) {
+      setIsHoveringTop(e.clientY < 50);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (isFocusMode) {
+      setIsHoveringTop(false);
+    }
+  };
 
   const handleEditorChange = (value: string, viewUpdate: any) => {
     onContentChange(value);
@@ -236,6 +238,8 @@ export function Editor({
         isFocusMode ? "p-0" : "p-8 md:p-12"
       )}
       style={{ backgroundColor: "var(--theme-editorBg)" }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
     >
       <div
         className={cn(
@@ -246,7 +250,7 @@ export function Editor({
         <div 
           className={cn(
             "mb-12 flex items-center justify-between transition-opacity duration-300",
-            isTyping ? "opacity-0 pointer-events-none" : "opacity-100"
+            isFocusMode ? (isHoveringTop ? "opacity-100" : "opacity-0") : "opacity-100"
           )}
         >
           <input

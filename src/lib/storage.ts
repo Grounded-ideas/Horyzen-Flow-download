@@ -4,6 +4,8 @@
  */
 
 import { Page } from "../types";
+import { readTextFile, writeTextFile, createDir, exists } from '@tauri-apps/plugin-fs';
+import { appDataDir, join } from '@tauri-apps/api/path';
 
 const STORAGE_KEY = "flow_pages";
 
@@ -36,15 +38,23 @@ export const storage = {
   // Backend File System methods
   async getPages(): Promise<Page[]> {
     try {
-      const response = await fetch("/api/pages");
-      if (!response.ok) throw new Error("Failed to fetch pages");
-      const data = await response.json();
+      const appData = await appDataDir();
+      const pagesPath = await join(appData, 'pages.json');
+      
+      const fileExists = await exists(pagesPath);
+      if (!fileExists) {
+        await createDir(appData, { recursive: true });
+        return [];
+      }
+      
+      const data = await readTextFile(pagesPath);
+      const pages = JSON.parse(data);
       
       // Deduplicate by ID to prevent React key warnings
       const seen = new Set<string>();
       const uniquePages = [];
       
-      for (const p of data) {
+      for (const p of pages) {
         if (!p.id) continue;
         if (!seen.has(p.id)) {
           seen.add(p.id);
@@ -54,7 +64,9 @@ export const storage = {
             content: p.content || "",
             createdAt: p.createdAt || Date.now(),
             updatedAt: p.updatedAt || Date.now(),
-            isPinned: p.pinned || false,
+            isPinned: p.isPinned || false,
+            isManuallyEdited: p.isManuallyEdited || false,
+            templateName: p.templateName || "",
           });
         }
       }
@@ -68,16 +80,29 @@ export const storage = {
 
   async savePage(page: Page, retries = 2) {
     try {
-      const response = await fetch("/api/pages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(page),
-      });
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || errorData.details || "Failed to save page");
+      const appData = await appDataDir();
+      const pagesPath = await join(appData, 'pages.json');
+      
+      await createDir(appData, { recursive: true });
+      
+      let pages: Page[] = [];
+      try {
+        const data = await readTextFile(pagesPath);
+        pages = JSON.parse(data);
+      } catch {
+        // File doesn't exist or is empty
       }
-      return await response.json();
+      
+      // Update or add the page
+      const existingIndex = pages.findIndex(p => p.id === page.id);
+      if (existingIndex >= 0) {
+        pages[existingIndex] = page;
+      } else {
+        pages.push(page);
+      }
+      
+      await writeTextFile(pagesPath, JSON.stringify(pages, null, 2));
+      return { success: true };
     } catch (error) {
       if (retries > 0) {
         console.warn(`Retrying savePage for ${page.id}, attempts left: ${retries}`);
@@ -91,11 +116,23 @@ export const storage = {
 
   async deletePage(id: string) {
     try {
-      const response = await fetch(`/api/pages/${id}`, {
-        method: "DELETE",
-      });
-      if (!response.ok) throw new Error("Failed to delete page");
-      return await response.json();
+      const appData = await appDataDir();
+      const pagesPath = await join(appData, 'pages.json');
+      
+      let pages: Page[] = [];
+      try {
+        const data = await readTextFile(pagesPath);
+        pages = JSON.parse(data);
+      } catch {
+        // File doesn't exist
+        return { success: true };
+      }
+      
+      // Remove the page
+      pages = pages.filter(p => p.id !== id);
+      
+      await writeTextFile(pagesPath, JSON.stringify(pages, null, 2));
+      return { success: true };
     } catch (error) {
       console.error("Error deleting page from FS:", error);
       throw error;

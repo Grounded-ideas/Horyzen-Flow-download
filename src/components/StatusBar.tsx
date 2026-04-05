@@ -44,6 +44,9 @@ export function StatusBar({ wordCount, charCount, lineCount, target = 500 }: Sta
           </span>
           {isTargetMet && <CheckCircle2 size={12} className="text-green-500" />}
         </div>
+        <div className="text-[9px] opacity-30">
+          v{__APP_VERSION__}
+        </div>
       </div>
     </div>
   );

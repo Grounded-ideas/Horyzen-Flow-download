@@ -13,6 +13,8 @@ import * as AutoSizerModule from 'react-virtualized-auto-sizer';
 const FixedSizeList = (ReactWindow as any).FixedSizeList || (ReactWindow as any).default || ReactWindow;
 const AutoSizer = (AutoSizerModule as any).AutoSizer || (AutoSizerModule as any).default || AutoSizerModule;
 
+import logo from '/Flow.svg';
+
 import { useTheme } from "../context/ThemeContext";
 
 const List = FixedSizeList;
@@ -182,7 +184,7 @@ export function Sidebar({
       <div className="flex items-center justify-between p-4 pb-2">
         <div className="flex items-center space-x-2">
           <img
-            src="/asset/Flow.svg"
+            src={logo}
             alt="Flow Logo"
             className="h-6 w-6 brand-icon small object-contain"
           />
