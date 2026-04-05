@@ -1,6 +1,13 @@
-import { Page } from "../types";
 import { readTextFile, writeTextFile, mkdir, exists } from '@tauri-apps/plugin-fs';
-import { appDataDir, join } from '@tauri-apps/plugin-path@~2';
+import { appDataDir, join } from '@tauri-apps/api/path';
+
+// Assuming Page type is defined elsewhere or used as any for this example
+export interface Page {
+  id: string;
+  title: string;
+  content: string;
+  updatedAt: number;
+}
 
 const STORAGE_KEY = "flow_pages";
 
@@ -56,7 +63,6 @@ export const storage = {
     }
   },
 
-  // THIS WAS LIKELY HIDDEN OR BROKEN BEFORE
   async deletePage(id: string): Promise<{ success: boolean }> {
     try {
       const appData = await appDataDir();
@@ -69,7 +75,7 @@ export const storage = {
       throw error;
     }
   }
-}; // This closing brace is vital!
+};
 
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
