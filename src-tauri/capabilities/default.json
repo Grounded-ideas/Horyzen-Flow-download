@@ -1,4 +1,11 @@
-  "permissions": [
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": [
+    "main"
+  ],
+    "permissions": [
     "core:default",
     "updater:default",
     "dialog:default",
@@ -6,3 +13,4 @@
     "fs:default",
     "path:default"
   ]
+}
