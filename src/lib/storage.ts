@@ -1,6 +1,6 @@
 import { Page } from "../types";
-import { readTextFile, writeTextFile, mkdir, exists } from '@tauri-apps/api/fs';
-import { appDataDir, join } from '@tauri-apps/api/path';
+import { readTextFile, writeTextFile, mkdir, exists } from '@tauri-apps/plugin-fs';
+import { appDataDir, join } from '@tauri-apps/plugin-path';
 
 const STORAGE_KEY = "flow_pages";
 
