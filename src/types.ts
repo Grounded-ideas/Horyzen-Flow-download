@@ -9,9 +9,9 @@ export interface Page {
   content: string;
   createdAt: number;
   updatedAt: number;
-  isPinned?: boolean;
-  templateName?: string;
+  isPinned: boolean;
   isManuallyEdited?: boolean;
+  templateName?: string;
 }
 
 export interface AppState {

@@ -2,15 +2,41 @@
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
   "description": "enables the default permissions",
-  "windows": [
-    "main"
-  ],
-    "permissions": [
+  "windows": ["main"],
+  "permissions": [
     "core:default",
     "updater:default",
     "dialog:default",
     "process:allow-restart",
-    "fs:default",
-    "core:path:default"
+    "core:path:default",
+    "store:default",
+    "fs:allow-appdata-write-recursive",
+    "fs:allow-appdata-read-recursive",
+    {
+      "identifier": "fs:allow-mkdir",
+      "allow": [
+        { "path": "$APPDATA" },
+        { "path": "$APPDATA/com.horyzen.flow" },
+        { "path": "$APPDATA/com.horyzen.flow/**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-write-file",
+      "allow": [
+        { "path": "$APPDATA/com.horyzen.flow/**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": [
+        { "path": "$APPDATA/com.horyzen.flow/**" }
+      ]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [
+        { "path": "$APPDATA/com.horyzen.flow/**" }
+      ]
+    }
   ]
 }

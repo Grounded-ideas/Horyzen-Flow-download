@@ -14,12 +14,16 @@ export default defineConfig(({mode}) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
+        '@tauri-apps/plugin-fs': path.resolve(__dirname, 'node_modules/@tauri-apps/plugin-fs'),
+        '@tauri-apps/plugin-store': path.resolve(__dirname, 'node_modules/@tauri-apps/plugin-store'),
+        '@tauri-apps/plugin-dialog': path.resolve(__dirname, 'node_modules/@tauri-apps/plugin-dialog'),
       },
     },
     optimizeDeps: {
       esbuildOptions: {
         target: 'esnext',
       },
+      include: ['@tauri-apps/plugin-fs', '@tauri-apps/plugin-store', '@tauri-apps/plugin-dialog'],
     },
     build: {
       target: 'esnext',

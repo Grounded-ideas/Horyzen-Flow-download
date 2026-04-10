@@ -31,11 +31,5 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
-  },
-  "plugins": {
-    "updater": {
-      "pubkey": "placeholder-public-key",
-      "createUpdaterArtifacts": true
-    }
   }
 }

@@ -1,6 +1,5 @@
 import nspell from "nspell";
 
-// Use local dictionary files instead of CDN
 let spellchecker: any = null;
 let customWords: string[] = [];
 
@@ -9,6 +8,7 @@ export async function initSpellchecker() {
 
   console.log("Initializing spellchecker...");
   try {
+    // Load dictionary files from local public folder
     const [affResponse, dicResponse] = await Promise.all([
       fetch("/dictionary/index.aff"),
       fetch("/dictionary/index.dic"),
@@ -26,11 +26,10 @@ export async function initSpellchecker() {
     spellchecker = nspell(aff, dic);
     console.log("Spellchecker initialized successfully.");
 
-    // Load custom dictionary
-    const response = await fetch("/api/dictionary");
-    if (response.ok) {
-      const data = await response.json();
-      customWords = data.words || [];
+    // Load custom dictionary from localStorage (no backend API)
+    const storedWords = localStorage.getItem("custom_dictionary");
+    if (storedWords) {
+      customWords = JSON.parse(storedWords);
       customWords.forEach((word) => spellchecker.add(word));
     }
 
@@ -43,7 +42,6 @@ export async function initSpellchecker() {
 
 export function checkWord(word: string): boolean {
   if (!spellchecker) return true;
-  // Ignore numbers and short words
   if (/^\d+$/.test(word) || word.length <= 1) return true;
   return spellchecker.correct(word);
 }
@@ -56,11 +54,8 @@ export function getSuggestions(word: string): string[] {
 export async function addWordToDictionary(word: string) {
   if (!spellchecker) return;
   spellchecker.add(word);
-  customWords.push(word);
-  
-  await fetch("/api/dictionary", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ words: customWords }),
-  });
+  if (!customWords.includes(word)) {
+    customWords.push(word);
+    localStorage.setItem("custom_dictionary", JSON.stringify(customWords));
+  }
 }

@@ -37,6 +37,10 @@ export function Editor({
   isSpellCheckEnabled,
 }: EditorProps) {
   const [isHoveringTop, setIsHoveringTop] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [suggestions, setSuggestions] = useState<any>(null);
+  const editorRef = useRef<any>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (isFocusMode) {

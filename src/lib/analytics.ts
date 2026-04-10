@@ -1,4 +1,5 @@
 import { format, isSameDay, startOfWeek, startOfMonth, subDays, differenceInDays } from "date-fns";
+import { Store } from '@tauri-apps/plugin-store';
 
 export interface Session {
   id: string;
@@ -37,12 +38,21 @@ let analyticsData: AnalyticsData = {
   dailyGoal: 500,
 };
 
+let store: Store | null = null;
+
+async function getStore(): Promise<Store> {
+  if (!store) {
+    store = await Store.load('analytics.json');
+  }
+  return store;
+}
+
 export async function loadAnalytics() {
   try {
-    const response = await fetch("/api/analytics");
-    if (response.ok) {
-      const data = await response.json();
-      // Ensure all required properties exist to avoid "undefined" errors
+    const store = await getStore();
+    const data = await store.get<AnalyticsData>('analytics');
+    
+    if (data) {
       analyticsData = {
         streak: {
           current: data.streak?.current ?? 0,
@@ -65,11 +75,9 @@ export async function loadAnalytics() {
 
 export async function saveAnalytics() {
   try {
-    await fetch("/api/analytics", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(analyticsData),
-    });
+    const store = await getStore();
+    await store.set('analytics', analyticsData);
+    await store.save();
   } catch (error) {
     console.error("Failed to save analytics:", error);
   }
@@ -144,7 +152,6 @@ export function updateCurrentSession(words: number) {
 export function getStats() {
   const now = new Date();
   
-  // Ensure analyticsData properties are defined
   const dailyWords = analyticsData.dailyWords || {};
   const hourlyDistribution = analyticsData.hourlyDistribution || Array(24).fill(0).reduce((acc, _, i) => ({ ...acc, [i]: 0 }), {});
   
