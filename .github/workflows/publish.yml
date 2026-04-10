@@ -3,8 +3,8 @@ name: publish
 on:
   push:
     tags:
-      - 'v*'  # Build only when you tag a release
-  workflow_dispatch:  # Also allow manual trigger
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   publish-tauri:
@@ -27,6 +27,10 @@ jobs:
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Clean old bundles
+        run: Remove-Item -Recurse -Force src-tauri/target/release/bundle -ErrorAction SilentlyContinue
+        shell: pwsh
+
       - name: install frontend dependencies
         run: npm install
 
@@ -42,5 +46,5 @@ jobs:
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Flow-App-Windows
-          path: src-tauri/target/release/bundle/msi/*.msi
+          name: Flow-App-Windows-${{ github.run_number }}
+          path: src-tauri/target/release/bundle/msi/Flow_*.msi
